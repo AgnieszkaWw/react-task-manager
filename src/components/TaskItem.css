@@ -1,0 +1,27 @@
+.task-item {
+  animation: fadeIn 0.3s ease-in-out;
+  transition: background-color 0.3s;
+}
+
+.task-item.done {
+  background-color: #f8f9fa;
+}
+
+.animated-checkbox {
+  transition: transform 0.2s ease;
+}
+
+.animated-checkbox:checked {
+  transform: scale(1.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

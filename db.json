@@ -1,0 +1,34 @@
+{
+  "tasks": [
+    {
+      "id": "bf7f",
+      "title": "kup mleko",
+      "completed": true,
+      "createdAt": "2025-06-17T16:06:49.349Z"
+    },
+    {
+      "id": "8417",
+      "title": "kup jajka",
+      "completed": false,
+      "createdAt": "2025-06-17T16:06:54.961Z"
+    },
+    {
+      "id": "6457",
+      "title": "kup chleb",
+      "completed": false,
+      "createdAt": "2025-06-17T16:07:00.516Z"
+    },
+    {
+      "id": "9d0c",
+      "title": "zrób pranie",
+      "completed": false,
+      "createdAt": "2025-06-17T16:07:09.561Z"
+    },
+    {
+      "id": "744a",
+      "title": "klej do rzęs",
+      "completed": false,
+      "createdAt": "2025-06-17T16:15:22.313Z"
+    }
+  ]
+}
