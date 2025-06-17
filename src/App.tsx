@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import TaskList from "./components/TaskList";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,6 +8,7 @@ export type Task = {
   title: string;
   completed: boolean;
   createdAt: string;
+  dueDate?: string;
 };
 
 type Filter = "all" | "completed" | "incomplete";
@@ -15,6 +17,7 @@ const App = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:3001/tasks")
@@ -64,23 +67,67 @@ const App = () => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
+  const editTask = async (id: number, newTitle: string) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, title: newTitle } : task
+    );
+    setTasks(updatedTasks);
+
+    const updatedTask = updatedTasks.find((task) => task.id === id);
+    if (updatedTask) {
+      await fetch(`http://localhost:3001/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      });
+    }
+  };
+
+  const markAllDone = () => {
+    const updated = tasks.map(task => ({ ...task, completed: true }));
+    setTasks(updated);
+  };
+
+  const clearAll = async () => {
+    for (const task of tasks) {
+      await fetch(`http://localhost:3001/tasks/${task.id}`, { method: "DELETE" });
+    }
+    setTasks([]);
+  };
+
   const filteredTasks = tasks.filter((task) => {
     if (filter === "completed") return task.completed;
     if (filter === "incomplete") return !task.completed;
     return true;
   });
 
+  const completedCount = tasks.filter(task => task.completed).length;
+
   return (
-    <div className="container mt-5">
+    <div className={`container mt-5 ${darkMode ? "bg-dark text-light" : "bg-white text-dark"}`}>
       <h1 className="mb-4">📝 Lista zadań</h1>
+
+      <div className="form-check form-switch mb-3">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id="darkModeSwitch"
+          checked={darkMode}
+          onChange={() => setDarkMode(!darkMode)}
+        />
+        <label className="form-check-label" htmlFor="darkModeSwitch">
+          🌙 Tryb ciemny
+        </label>
+      </div>
 
       <div className="input-group mb-3">
         <input
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Dodaj nowe zadanie"
+          placeholder="Np. Ugotuj obiad, zadzwoń do mamy..."
           className="form-control"
+          title="Wpisz nazwę zadania i kliknij Dodaj"
         />
         <button className="btn btn-primary" onClick={addTask}>
           Dodaj
@@ -93,7 +140,16 @@ const App = () => {
         <button className="btn btn-outline-secondary" onClick={() => setFilter("incomplete")}>Niezrobione</button>
       </div>
 
-      <TaskList tasks={filteredTasks} toggleTask={toggleTask} deleteTask={deleteTask} />
+      <p><strong>Zrobione:</strong> {completedCount} z {tasks.length}</p>
+
+      <TaskList
+        tasks={filteredTasks}
+        toggleTask={toggleTask}
+        deleteTask={deleteTask}
+        editTask={editTask}
+        markAllDone={markAllDone}
+        clearAll={clearAll}
+      />
     </div>
   );
 };
