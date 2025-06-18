@@ -20,7 +20,7 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3001/tasks")
+    fetch("https://685270d80594059b23cd89b7.mockapi.io/tasks")
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error("Błąd ładowania zadań:", err));
@@ -35,7 +35,7 @@ const App = () => {
       createdAt: new Date().toISOString(),
     };
 
-    const res = await fetch("http://localhost:3001/tasks", {
+    const res = await fetch("https://685270d80594059b23cd89b7.mockapi.io/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTask),
@@ -54,7 +54,7 @@ const App = () => {
 
     const updatedTask = updatedTasks.find((task) => task.id === id);
     if (updatedTask) {
-      await fetch(`http://localhost:3001/tasks/${id}`, {
+      await fetch(`https://685270d80594059b23cd89b7.mockapi.io/tasks${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
@@ -63,7 +63,7 @@ const App = () => {
   };
 
   const deleteTask = async (id: number) => {
-    await fetch(`http://localhost:3001/tasks/${id}`, { method: "DELETE" });
+    await fetch(`https://685270d80594059b23cd89b7.mockapi.io/tasks/${id}`, { method: "DELETE" });
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
@@ -75,7 +75,7 @@ const App = () => {
 
     const updatedTask = updatedTasks.find((task) => task.id === id);
     if (updatedTask) {
-      await fetch(`http://localhost:3001/tasks/${id}`, {
+      await fetch(`https://685270d80594059b23cd89b7.mockapi.io/tasks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
@@ -89,12 +89,17 @@ const App = () => {
   };
 
   const clearAll = async () => {
-    for (const task of tasks) {
-      await fetch(`http://localhost:3001/tasks/${task.id}`, { method: "DELETE" });
-    }
-    setTasks([]);
-  };
+  const confirmed = window.confirm("Czy na pewno chcesz usunąć wszystkie zadania?");
+  if (!confirmed) return;
 
+  for (const task of tasks) {
+    await fetch(`https://685270d80594059b23cd89b7.mockapi.io/tasks/${task.id}`, {
+      method: "DELETE",
+    });
+  }
+
+  setTasks([]);
+};
   const filteredTasks = tasks.filter((task) => {
     if (filter === "completed") return task.completed;
     if (filter === "incomplete") return !task.completed;
